@@ -1,0 +1,9 @@
+{
+  "logLevel": "debug",
+  "token": "",
+  "prefix": "!",
+  "id": "",
+  "supportServer": "https://discord.gg/inviteCode",
+  "logChannelId": "",
+  "mongoUrl": "mongo connection string"
+}
