@@ -16,6 +16,7 @@ export default class Cluster extends Client {
   public database: Connection;
   public guildSettings: GuildSettingsList;
   public lastDataUpdate: Date;
+  public botVersion: string = process.env.npm_package_version || 'N/A';
   public ships: Ship[];
   public unreleasedShips: UnreleasedShip[];
   public config = config;

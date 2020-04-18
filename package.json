@@ -1,9 +1,10 @@
 {
   "name": "prinz-eugen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Prinz Eugen, discord bot for Azur Lane",
   "main": "src/main.ts",
   "scripts": {
+    "build-run": "npm run build && npm start",
     "build": "tsc",
     "start": "node ./dist/src/main.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",

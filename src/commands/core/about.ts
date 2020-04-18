@@ -59,6 +59,10 @@ export default class extends Command {
       name: 'Spam Protection',
       value: `Max ${this.client.config.antiSpam.maxMessages} messages in ${this.client.config.antiSpam.timeout / 1000} seconds.`,
       inline: true
+    }, {
+      name: 'Version',
+      value: this.client.botVersion,
+      inline: true
     }]);
 
     if(avatar) embed.setThumbnail(avatar);
