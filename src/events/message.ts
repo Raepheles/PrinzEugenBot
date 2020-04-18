@@ -81,6 +81,11 @@ export default class extends Event {
         await command.execute({ message, params: params.length !== 0 ? params : undefined, flags });
         command.postExecute(message);
       } catch(err) {
+        message.channel.send(new MessageEmbed()
+          .setDescription(this.client.translate('common:COMMAND_EXECUTE_ERROR', { guild: message.guild }))
+          .setColor(Colors.ERROR_COLOR)
+          .setTimestamp()
+        );
         command.postExecute(message, err);
       }
     }

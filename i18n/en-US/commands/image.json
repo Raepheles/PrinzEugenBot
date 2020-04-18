@@ -1,4 +1,6 @@
 {
+  "COMMAND_DESCRIPTION": "Shows image of given ship.",
+  "COMMAND_USAGE": "`{{prefix}}image [ship-name] (flags)`\nExamples:\n`{{prefix}}image Prinz Eugen`\n`{{prefix}}image Prinz Eugen -chibi`\n`{{prefix}}image Prinz Eugen -chibi -skins`",
   "NO_SKINS": "Couldn't find any skins for {{shipName}}",
   "SKIN_EMBED_DESCRIPTION": "Select on of the options below by reacting this message. You have {{timeout}} seconds before this message deletes itself."
 }

@@ -167,7 +167,7 @@ export default class Command {
         channelId
       }
     });
-    this.client.logger.trace(msg);
+    this.client.logger.trace(`${msg} | ${error ? error : 'SUCCESS'}`);
     this.client.discordLogger.log(`${msg} | ${error ? error : 'SUCCESS'}`);
   }
 }

@@ -2,5 +2,5 @@
   "COMMAND_DESCRIPTION": "About this bot.",
   "COMMAND_USAGE": "`{{prefix}}about`",
   "FOOTER": "Made by {{ownerName}}#{{ownerHash}} with ❤️",
-  "DESCRIPTION": "Prinz Eugen is a bot made for Azur Lane. To see command list use `!help` command. You can join {{ownerName}}'s support server from [here]({{supportServerUrl}})."
+  "DESCRIPTION": "{{botName}} is a bot made for Azur Lane. To see command list use `!help` command. You can join support server of {{botName}} from [here]({{supportServerUrl}})."
 }

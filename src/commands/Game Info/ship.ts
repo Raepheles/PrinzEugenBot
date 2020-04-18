@@ -113,16 +113,16 @@ export default class extends Command {
         name: 'Stats',
         value: stats2.join('\n'),
         inline: true
-      }, {
-        name: 'Skills',
-        value: skills.join('\n'),
-        inline: false
-      }, {
-        name: 'Misc',
-        value: misc.join('\n'),
-        inline: false
       }])
       .setColor(getColorForRarity(ship.rarity, isRetrofit));
+
+      if(skills.join('\n').length > 1024) {
+        splitField('Skills', skills, false, embed);
+      } else {
+        embed.addField('Skills', skills.join('\n'), false);
+      }
+
+      embed.addField('Misc', misc.join('\n'), false);
 
       if(ship.images.icon) embed.setThumbnail(ship.images.icon);
 
@@ -146,4 +146,13 @@ export default class extends Command {
       return message.channel.send(embed);
     }
   }
+}
+
+function splitField(fieldName: string, content: string[], inline: boolean, embed: MessageEmbed) {
+  const a = content.slice(0, content.length/2);
+  if(a.join('\n').length > 1024) splitField(fieldName, a, inline, embed);
+  else embed.addField(fieldName, a.join('\n'), inline);
+  const b = content.slice(content.length/2, content.length);
+  if(b.join('\n').length > 1024) splitField(fieldName, b, inline, embed);
+  else embed.addField(fieldName, b.join('\n'), inline);
 }
