@@ -1,0 +1,5 @@
+{
+  "COMMAND_DESCRIPTION": "Shows information about given ship.",
+  "COMMAND_USAGE": "`{{prefix}}ship [ship-name] (flags)`\nExample: `{{prefix}}ship Prinz Eugen`",
+  "SHIP_RETROFIT_NOT_FOUND": "{{shipName}} doesn't have retrofit."
+}

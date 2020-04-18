@@ -1,0 +1,8 @@
+{
+  "COMMAND_DESCRIPTION": "Finds the ships with given build time. You can use hh:mm or hh:mm:ss format.",
+  "COMMAND_USAGE": "`{{prefix}}build [build-time]`\nExamples:\n`{{prefix}}build 1:50`\n`{{prefix}}build 1:20:00`",
+  "NAN": "{{arg}} is not a number.",
+  "PARSE_ERROR": "`{{time}}` couldn't be parsed.",
+  "DESCRIPTION": "Following ships have the build time of {{time}}\n\n{{ships}}",
+  "NO_SHIP_FOUND": "Couldn't find any ship with build time of `{{time}}`"
+}
