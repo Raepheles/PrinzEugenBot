@@ -1,0 +1,6 @@
+{
+  "COMMAND_DESCRIPTION": "Shows information on how to get given ship.",
+  "COMMAND_USAGE": "`{{prefix}}howtoget [ship-name]`\nExample: `{{prefix}}howtoget Prinz Eugen`",
+  "UNRELEASED_SHIP": "This ship is not released therefor not acquirable.",
+  "NO_DROP": "This ship cannot be acquired as drop."
+}

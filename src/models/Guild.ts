@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import * as config from '../../config.json';
 
 const Schema = mongoose.Schema;
 
@@ -16,6 +17,7 @@ export const GuildSchema = new Schema({
   },
   prefix: {
     type: String,
+    default: config.prefix
   },
   language: {
     type: String,
@@ -29,4 +31,6 @@ export const GuildSchema = new Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  collection: 'guilds'
 });

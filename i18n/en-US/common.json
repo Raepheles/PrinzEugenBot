@@ -1,5 +1,6 @@
 {
-  "DESCRIPTION": "Prinz Eugen is a bot made for Azur Lane. To see command list use `!help` command. You can join {{ownerName}}'s support server from [here]({{supportServerUrl}}).",
-  "ABOUT_FOOTER": "Made by Raepheles with ❤️",
-  "TEST": "test message"
+  "COMMAND_PARSE_ERROR": "There was an error while parsing command. This is most likely because of the order of arguments. Use the pattern below for command.\n\n`[prefix][command] [mandatory_command_args] (optional_command_args) (flags)`\n\n**Rules**\n- Arguments in [] brackets are mandatory.\n- Do not type brackets.\n- Type `-` before each flag.\n- Flags must be at the end of the command.\n\nExample: `!ship prinz eugen -lv120`",
+  "USER_USED_COMMAND": "`{{user}} ({{userId}})` has used command `{{command}}` in guild `{{guildName}} ({{guildId}})` in channel `{{channelName}} ({{channelId}})`",
+  "COMMAND_EXECUTE_ERROR": "An internal error has occured while executing your command. You can report this using `{{prefix}}feedback` command. Make sure to mention the steps needed to reproduce this error.",
+  "UNRELEASED_SHIP": "This ship is not released yet."
 }
