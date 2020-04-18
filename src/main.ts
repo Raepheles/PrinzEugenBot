@@ -60,7 +60,7 @@ async function start() {
   await client.events.init();
   await client.login(client.config.token);
 
-  const cronJob = new CronJob('0 1 * * *', async () => {
+  const cronJob = new CronJob('0 3 * * *', async () => {
     parseShips(client);
   }, null, true, 'Europe/Istanbul');
   cronJob.start();

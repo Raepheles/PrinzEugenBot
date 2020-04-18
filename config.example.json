@@ -10,5 +10,9 @@
   "feedbackChannelId": "",
   "shipsFileName": "ships",
   "wikiBaseUrl": "https://azurlane.koumakan.jp",
-  "shipListUrl": "https://azurlane.koumakan.jp/List_of_Ships"
+  "shipListUrl": "https://azurlane.koumakan.jp/List_of_Ships",
+  "antiSpam": {
+    "maxMessages": 5,
+    "timeout": 30000
+  }
 }

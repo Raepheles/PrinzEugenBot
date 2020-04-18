@@ -1,9 +1,11 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, User } from 'discord.js';
 import { getPermissionName } from '../utils/PermissionUtils';
 import Event from '../structures/Event';
 import { Colors } from '../utils/ColorUtils';
 
 export default class extends Event {
+  antiSpam: Map<User, number> = new Map();
+
   execute(message: Message) {
     if(message.partial || (message.author && message.author.bot)) return;
 
@@ -17,6 +19,11 @@ export default class extends Event {
     if(!message.guild.available) return;
     if(!message.guild.me)
       await message.guild.members.fetch(this.client.config.id);
+
+    const authorPastMessageCount = this.antiSpam.get(message.author);
+    if(authorPastMessageCount && authorPastMessageCount >= this.client.config.antiSpam.maxMessages) {
+      return;
+    }
 
     const [split, ...rest] = message.content.trim().replace(/\s\s+/g, ' ').split(' ');
 
@@ -58,6 +65,15 @@ export default class extends Event {
       if(!message.member.hasPermission(requiredPerm)) return message.reply(`You need \`${getPermissionName(requiredPerm)}\` permission to use this command.`);
     }
 
+    if(message.author.id !== this.client.config.ownerId) {
+      this.antiSpam.set(message.author, authorPastMessageCount ? authorPastMessageCount + 1 : 1);
+      setTimeout(() => {
+        const current = this.antiSpam.get(message.author);
+        if(!current) return;
+        if(current === 1) this.antiSpam.delete(message.author);
+        else this.antiSpam.set(message.author, current - 1);
+      }, this.client.config.antiSpam.timeout);
+    }
 
     const isSuccess = await command.preExecute({ message, params, flags });
     if(isSuccess) {

@@ -55,6 +55,10 @@ export default class extends Command {
       name: 'Last Data Update (UTC)',
       value: `${moment(this.client.lastDataUpdate).utc().format('LLLL')}`,
       inline: true
+    }, {
+      name: 'Spam Protection',
+      value: `Max ${this.client.config.antiSpam.maxMessages} messages in ${this.client.config.antiSpam.timeout / 1000} seconds.`,
+      inline: true
     }]);
 
     if(avatar) embed.setThumbnail(avatar);
