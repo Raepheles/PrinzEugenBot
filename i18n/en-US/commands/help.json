@@ -1,0 +1,8 @@
+{
+  "COMMAND_DESCRIPTION": "Shows all commands this bot has when used without parameters. Use with a parameter to see detailed explanation about command",
+  "COMMAND_USAGE": "`{{prefix}}help (command-name)`\nExamples:\n`{{prefix}}help`\n`{{prefix}}help {{example}}`",
+  "DESCRIPTION": "Use `{{prefix}}help [command-name]` for further help on the command.\n\nExample: `{{prefix}}help {{example}}`",
+  "COMMAND_NOT_FOUND_TITLE": "Command not found",
+  "COMMAND_NOT_FOUND_DESCRIPTION": "Command not found.",
+  "COMMAND_FOUND_TITLE": "Command: {{command}}"
+}

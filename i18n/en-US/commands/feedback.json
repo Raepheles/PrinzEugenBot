@@ -1,0 +1,6 @@
+{
+  "COMMAND_DESCRIPTION": "Sends message to the owner of this bot. You can use this command to give your feedbacks or report bugs/errors. Make sure your message doesn't exceed 2048 characters.",
+  "COMMAND_USAGE": "`{{prefix}}feedback [message]`\nExample: `{{prefix}}feedback This is sample feedback message.`",
+  "SUCCESS": "Your message has successfully been sent to owner of the bot.",
+  "FAIL": "There was an error while sending your message to the owner of the bot. Make sure your message doesn't exceed 2048 characters. If that is not the case this error is most likely related to bot's configuration. You can join {{botName}} support channel to report this issue. Use `{{prefix}}about` command to get invite link to support server."
+}

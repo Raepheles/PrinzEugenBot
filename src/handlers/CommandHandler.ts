@@ -18,13 +18,18 @@ export default class CommandHandler extends Collection<string, Command> {
       const path = join(__dirname, '..', 'commands');
       const start = Date.now();
 
-      klaw(path)
+      klaw(path, { depthLimit: 1 })
         .on('data', (item) => {
           const file = parse(item.path);
           if(!file.ext || file.ext !== '.js') return;
 
           const req = ((r) => r.default || r)(require(join(file.dir, file.base)));
-          const newReq = new req(this.client, file.name, join(file.dir, file.base));
+          let module = file.dir;
+          let lastIndex = module.lastIndexOf('/');
+          lastIndex = lastIndex === -1 ? module.lastIndexOf('\\') : lastIndex;
+          module = lastIndex !== -1 ? module.substr(lastIndex + 1) : '';
+          if(!module || module === 'commands') module = 'NoModule';
+          const newReq = new req(this.client, file.name, module, join(file.dir, file.base));
 
           this.set(file.name, newReq);
         })

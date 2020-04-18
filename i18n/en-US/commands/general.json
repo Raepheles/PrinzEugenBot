@@ -1,0 +1,15 @@
+{
+  "DESCRIPTION": "Description",
+  "USAGE": "Usage",
+  "NO_DESCRIPTION": "There is no description for this command.",
+  "NO_USAGE": "There is no usage for this command.",
+  "REQUESTED_BY": "Requested by {{user}}#{{hash}}",
+  "PARAM_ERROR": "You are seeing this message because you've either used too many parameters or too few.",
+  "INVALID_FLAG": "You are seeing this message because this command doesn't accept `{{flag}}` flag.",
+  "CONFLICTED_FLAGS": "You are seeing this message because you've tried to use following flags at the same time: {{flags}}",
+  "ALIASES": "Command Aliases",
+  "NO_ALIASES": "There are not aliases for this command.",
+  "ACCEPTED_FLAGS": "Accepted Flags",
+  "NO_FLAGS": "There are no flags for this command.",
+  "SHIP_NOT_FOUND": "Couldn't find ship by the name `{{shipName}}`"
+}

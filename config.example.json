@@ -1,9 +1,14 @@
 {
-  "logLevel": "debug",
+  "logLevel": "This is log level for stdout",
+  "traceFileLogsOn": false,
   "token": "",
   "prefix": "!",
   "id": "",
   "supportServer": "https://discord.gg/inviteCode",
   "logChannelId": "",
-  "mongoUrl": "mongo connection string"
+  "mongoUrl": "mongo connection string",
+  "feedbackChannelId": "",
+  "shipsFileName": "ships",
+  "wikiBaseUrl": "https://azurlane.koumakan.jp",
+  "shipListUrl": "https://azurlane.koumakan.jp/List_of_Ships"
 }

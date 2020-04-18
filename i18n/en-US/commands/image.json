@@ -1,0 +1,4 @@
+{
+  "NO_SKINS": "Couldn't find any skins for {{shipName}}",
+  "SKIN_EMBED_DESCRIPTION": "Select on of the options below by reacting this message. You have {{timeout}} seconds before this message deletes itself."
+}

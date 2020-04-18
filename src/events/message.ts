@@ -1,6 +1,7 @@
-import { Message } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import { getPermissionName } from '../utils/PermissionUtils';
 import Event from '../structures/Event';
+import { Colors } from '../utils/ColorUtils';
 
 export default class extends Event {
   execute(message: Message) {
@@ -17,12 +18,35 @@ export default class extends Event {
     if(!message.guild.me)
       await message.guild.members.fetch(this.client.config.id);
 
-    const [split, ...params] = message.content.split(' ');
+    const [split, ...rest] = message.content.trim().replace(/\s\s+/g, ' ').split(' ');
 
     const prefix = this.client.config.prefix;
     if(!prefix || !message.content.startsWith(prefix)) return;
 
+    // lower case command
     const command = this.client.commands.fetch(split.slice(prefix.length).toLowerCase());
+    const params: string[] = [];
+    const flags: string[] = [];
+
+    let flagFound = false;
+    let parseError = false;
+    rest.forEach(val => {
+      if(val.startsWith('-')) {
+        flagFound = true;
+        flags.push(val.slice(1).toLowerCase()); // lower case all flags
+      } else {
+        if(flagFound) {
+          parseError = true;
+          return;
+        }
+        params.push(val.toLowerCase()); // lower case all parameters
+      }
+    });
+
+    if(parseError) return message.channel.send(new MessageEmbed()
+      .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
+      .setTimestamp()
+    );
 
     if(!command) return;
     if(!message.member)
@@ -34,22 +58,63 @@ export default class extends Event {
       if(!message.member.hasPermission(requiredPerm)) return message.reply(`You need \`${getPermissionName(requiredPerm)}\` permission to use this command.`);
     }
 
-    command.execute(message, params)
-      .then(() => command.postExecute(message, params))
-      .catch(err => command.postExecute(message, params, err));
+
+    const isSuccess = await command.preExecute({ message, params, flags });
+    if(isSuccess) {
+      try {
+        await command.execute({ message, params: params.length !== 0 ? params : undefined, flags });
+        command.postExecute(message);
+      } catch(err) {
+        command.postExecute(message, err);
+      }
+    }
   }
 
-  handleDM(message: Message) {
+  async handleDM(message: Message) {
     if(!message.content.startsWith(this.client.config.prefix)) return;
 
-    const [split, ...params] = message.content.split(' ');
+    const [split, ...rest] = message.content.split(' ');
 
     const command = this.client.commands.get(split.slice(this.client.config.prefix.length));
+    const params: string[] = [];
+    const flags: string[] = [];
+
+    let flagFound = false;
+    let parseError = false;
+    rest.forEach(val => {
+      if(val.startsWith('-')) {
+        flagFound = true;
+        flags.push(val.slice(1));
+      } else {
+        if(flagFound) {
+          parseError = true;
+          return;
+        }
+        params.push(val);
+      }
+    });
+
+    if(parseError) return message.channel.send(new MessageEmbed()
+      .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
+      .setColor(Colors.ERROR_COLOR)
+      .setTimestamp()
+    );
 
     if(!command || !command.dm) return;
 
-    command.execute(message, params)
-      .then(() => command.postExecute(message, params))
-      .catch(err => command.postExecute(message, params, err));
+    const isSuccess = await command.preExecute({ message, params, flags });
+    if(isSuccess) {
+      try {
+        await command.execute({ message, params: params.length !== 0 ? params : undefined, flags });
+        command.postExecute(message);
+      } catch(err) {
+        message.channel.send(new MessageEmbed()
+          .setDescription(this.client.translate('common:COMMAND_EXECUTE_ERROR', { guild: message.guild }))
+          .setColor(Colors.ERROR_COLOR)
+          .setTimestamp()
+        );
+        command.postExecute(message, err);
+      }
+    }
   }
 }
