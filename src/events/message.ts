@@ -52,6 +52,7 @@ export default class extends Event {
 
     if(parseError) return message.channel.send(new MessageEmbed()
       .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
+      .setColor(Colors.ERROR_COLOR)
       .setTimestamp()
     );
 
@@ -85,7 +86,7 @@ export default class extends Event {
           .setDescription(this.client.translate('common:COMMAND_EXECUTE_ERROR', { guild: message.guild }))
           .setColor(Colors.ERROR_COLOR)
           .setTimestamp()
-        );
+        ).catch(err = err);
         command.postExecute(message, err);
       }
     }

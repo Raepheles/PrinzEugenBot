@@ -3,7 +3,7 @@ import { Guild } from 'discord.js';
 import { GuildSchema } from './models/Guild';
 import { GuildSettings } from './types/GuildSettings';
 import { Document } from 'mongoose';
-import { ShipAlias } from './types/Ship';
+import { ShipAlias } from './types/ParseData';
 import { AliasSchema } from './models/Alias';
 
 /**

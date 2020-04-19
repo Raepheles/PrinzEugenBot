@@ -9,6 +9,7 @@ import { getReactionFromNumber, getNumberFromReaction } from '../../utils/Reacti
 export default class extends Command {
   dm = true;
   minParam = 1;
+  aliases = ['img'];
   acceptedFlags = [
     new Flag('skins', 1),
     new Flag('skin', 1),

@@ -4,7 +4,7 @@ import { getShipNameForAlias, getShip, getUnreleasedShip } from '../../utils/Shi
 import { CommandExecArgs } from '../../types/CommandExecArgs';
 import Flag from '../../structures/Flag';
 import { Colors, getColorForRarity } from '../../utils/ColorUtils';
-import { ShipStats } from '../../types/Ship';
+import { ShipStats } from '../../types/ParseData';
 
 export default class extends Command {
   dm = true;

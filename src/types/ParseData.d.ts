@@ -64,12 +64,37 @@ export interface ShipConstruction {
   time: string;
 }
 
-export interface ShipParse {
+export interface ParseData {
   date: Date;
   ships: Ship[];
   unreleasedShips: UnreleasedShip[];
+  equipments: Equipment[];
 }
 
+export interface Equipment {
+  name: string;
+  url: string;
+  image?: string;
+  mainUsers: string[];
+  secondaryUsers: string[];
+  type: string;
+  nation: string;
+  type1?: EquipmentType;
+  type2?: EquipmentType;
+  type3?: EquipmentType;
+  type0?: EquipmentType;
+}
+
+export interface EquipmentType {
+  rarity: string;
+  stats: EquipmentStats;
+  obtainedFrom?: string;
+  notes?: string;
+}
+
+export interface EquipmentStats {
+  [key: string]: string;
+}
 
 export interface UnreleasedShip {
   name: string;
