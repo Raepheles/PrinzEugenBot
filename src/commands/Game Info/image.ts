@@ -104,7 +104,8 @@ export default class extends Command {
 
     } else if(ship) {
       embed.setTitle(`${ship.id} - ${ship.name}`)
-      .setURL(`${ship.url}`);
+      .setURL(`${ship.url}`)
+      .setColor(getColorForRarity(ship.rarity));
 
       if(chibiFlag && ship.images.chibi) {
         embed.setImage(ship.images.chibi);
