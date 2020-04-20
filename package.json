@@ -5,11 +5,12 @@
   "main": "src/main.ts",
   "scripts": {
     "build-run": "npm run build && npm start",
+    "prebuild": "rimraf dist",
     "build": "tsc",
+    "postbuild": "ncp i18n dist/i18n",
     "start": "node ./dist/src/main.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "lint-fix": "tslint --fix -c tslint.json 'src/**/*.ts'",
-    "postbuild": "ncp i18n dist/i18n"
+    "lint-fix": "tslint --fix -c tslint.json 'src/**/*.ts'"
   },
   "keywords": [
     "discord.js",
@@ -42,6 +43,7 @@
     "mongoose": "^5.9.9",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
+    "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
   },
   "devDependencies": {
