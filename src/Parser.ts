@@ -16,7 +16,7 @@ interface EquipmentMisc {
 
 interface EquipmentUsers {
   mainUsers: string[];
-  secondaryUsers: string[];
+  secondaryUsers?: string[];
 }
 
 export class Parser {
@@ -233,7 +233,7 @@ export class Parser {
 
     for(const child of eqStatsTbody.children) {
       if(child.children.length !== 2) continue;
-      const key = child.firstElementChild?.getAttribute('alt') || child.firstElementChild?.textContent?.trim();
+      const key = child.firstElementChild?.firstElementChild?.getAttribute('alt') || child.firstElementChild?.textContent?.trim();
       const value = child.lastElementChild?.textContent?.trim();
       if(!key || !value) continue;
       eqStats[key] = value;
@@ -282,7 +282,7 @@ export class Parser {
     }
     return {
       mainUsers,
-      secondaryUsers
+      secondaryUsers: secondaryUsers.length !== 0 ? secondaryUsers : undefined
     };
   }
 

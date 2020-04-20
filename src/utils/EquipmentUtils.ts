@@ -2,7 +2,7 @@ import { Equipment, EquipmentType } from '../types/ParseData';
 import { didYouMean } from './StringUtils';
 
 export function getEquipment(name: string, equipments: Equipment[]): Equipment | undefined {
-  const suggestions = didYouMean(name, equipments.map(e => e.name), { minSimilarity: 0.2 });
+  const suggestions = didYouMean(name, equipments.map(e => e.name));
   if(suggestions.length > 0) name = suggestions[0].toLowerCase();
   return equipments.find(eq => eq.name.toLowerCase() === name);
 }

@@ -76,7 +76,7 @@ export interface Equipment {
   url: string;
   image?: string;
   mainUsers: string[];
-  secondaryUsers: string[];
+  secondaryUsers?: string[];
   type: string;
   nation: string;
   type1?: EquipmentType;

@@ -1,6 +1,6 @@
 {
   "name": "prinz-eugen",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Prinz Eugen, discord bot for Azur Lane",
   "main": "src/main.ts",
   "scripts": {
