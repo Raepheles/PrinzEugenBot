@@ -55,7 +55,7 @@ export default class extends Command {
     const result: string[] = [];
 
     this.client.ships.filter(ship => ship.construction.time === timeString).forEach(ship => {
-      result.push(`[${ship.id} - ${ship.name}](${this.client.config.wikiBaseUrl}/${ship.name})`);
+      result.push(`[${ship.id} - ${ship.name}](${ship.url})`);
     });
 
     if(result.length === 0) {
