@@ -79,7 +79,8 @@ export default class extends Command {
       const collector = response.createReactionCollector(reactionFilter, { time: timeout * 1000, dispose: true });
 
       for(let i = 1; i <= maxChoices; i++) {
-        response.react(getReactionFromNumber(i)).catch(err => err);
+        await response.react(getReactionFromNumber(i))
+          .catch(err => this.client.logger.error(`Error while adding reaction in image command: ${err}`));
       }
 
       const reactionHandle = (reaction: MessageReaction) => {

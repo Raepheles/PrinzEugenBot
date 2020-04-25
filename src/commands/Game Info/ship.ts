@@ -122,7 +122,7 @@ export default class extends Command {
         embed.addField('Skills', skills.join('\n'), false);
       }
 
-      embed.addField('Misc', misc.join('\n'), false);
+      if(misc.length !== 0) embed.addField('Misc', misc.join('\n'), false);
 
       if(ship.images.icon) embed.setThumbnail(ship.images.icon);
 
