@@ -492,7 +492,7 @@ export class Parser {
 
     if(retrofit && key !== 'base') title = `${title} Retrofit`;
     const selector = doc.querySelectorAll(`[title="${title}"]`);
-    const el = selector.length > 1 ? selector.item(0) : undefined;
+    const el = selector.length >= 1 ? selector.item(0) : undefined;
     if(!el) throw Error(`Couldn't find ${key} stats for ${shipName}`);
 
     const tables = el.getElementsByTagName('table');

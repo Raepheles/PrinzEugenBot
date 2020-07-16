@@ -1,0 +1,5 @@
+{
+  "COMMAND_DESCRIPTION": "Sends message to user.",
+  "COMMAND_USAGE": "`{{prefix}}message [user-id] [message]`",
+  "USER_NOT_FOUND": "Couldn't find user with the id `{{id}}`."
+}

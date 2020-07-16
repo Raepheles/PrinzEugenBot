@@ -27,7 +27,8 @@ export default class extends Event {
 
     const [split, ...rest] = message.content.trim().replace(/\s\s+/g, ' ').split(' ');
 
-    const prefix = this.client.config.prefix;
+    const settings = this.client.guildSettings[message.guild.id];
+    const prefix = (settings && settings.prefix) || this.client.config.prefix;
     if(!prefix || !message.content.startsWith(prefix)) return;
 
     // lower case command
@@ -50,11 +51,13 @@ export default class extends Event {
       }
     });
 
-    if(parseError) return message.channel.send(new MessageEmbed()
-      .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
-      .setColor(Colors.ERROR_COLOR)
-      .setTimestamp()
-    );
+    if(parseError) {
+      return message.channel.send(new MessageEmbed()
+        .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
+        .setColor(Colors.ERROR_COLOR)
+        .setTimestamp()
+      ).catch(this.client.logger.error);
+    }
 
     if(!command) return;
     if(!message.member)
@@ -63,8 +66,13 @@ export default class extends Event {
 
     const requiredPerms = command.requiredPerms;
     for(const requiredPerm of requiredPerms) {
-      if(!message.member.hasPermission(requiredPerm)) return message.reply(`You need \`${getPermissionName(requiredPerm)}\` permission to use this command.`);
+      if(!message.member.hasPermission(requiredPerm)) {
+        return message.reply(`You need \`${getPermissionName(requiredPerm)}\` permission to use this command.`)
+          .catch(this.client.logger.debug);
+      }
     }
+
+    if(command.admin && message.author.id !== this.client.config.ownerId) return;
 
     if(message.author.id !== this.client.config.ownerId) {
       this.antiSpam.set(message.author, authorPastMessageCount ? authorPastMessageCount + 1 : 1);
@@ -116,13 +124,17 @@ export default class extends Event {
       }
     });
 
-    if(parseError) return message.channel.send(new MessageEmbed()
-      .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
-      .setColor(Colors.ERROR_COLOR)
-      .setTimestamp()
-    );
+    if(parseError) {
+      return message.channel.send(new MessageEmbed()
+        .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
+        .setColor(Colors.ERROR_COLOR)
+        .setTimestamp()
+      ).catch(this.client.logger.debug);
+    }
 
     if(!command || !command.dm) return;
+
+    if(command.admin && message.author.id !== this.client.config.ownerId) return;
 
     const isSuccess = await command.preExecute({ message, params, flags });
     if(isSuccess) {

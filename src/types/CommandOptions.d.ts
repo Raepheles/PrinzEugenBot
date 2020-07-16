@@ -10,4 +10,5 @@ export interface CommandOptions {
   acceptedFlags?: Flag[];
   maxParam?: number;
   minParam?: number;
+  admin?: boolean;
 }
