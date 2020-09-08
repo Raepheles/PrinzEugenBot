@@ -612,6 +612,15 @@ export class Parser {
     const types: boolean[] = [];
 
     const tbody = el.firstElementChild?.firstElementChild;
+    if(!tbody) {
+      // Construction table couldn't be found. It might be research ship.
+      return {
+        text: '**Type:**\n**Time: Research Only**',
+        drop: undefined,
+        additional: undefined,
+        time: 'Research Only'
+      };
+    }
     const constTime = tbody?.children.item(1)?.children.item(0)?.textContent?.trim();
     if(!tbody) throw Error(`Couldn't get tbody from Construction table for ${shipName}`);
     if(!constTime) throw Error(`Couldn't get construction time from construction table for ${shipName}`);

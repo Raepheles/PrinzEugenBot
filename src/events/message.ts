@@ -94,7 +94,7 @@ export default class extends Event {
           .setDescription(this.client.translate('common:COMMAND_EXECUTE_ERROR', { guild: message.guild }))
           .setColor(Colors.ERROR_COLOR)
           .setTimestamp()
-        ).catch(err = err);
+        ).catch(this.client.logger.error);
         command.postExecute(message, err);
       }
     }
