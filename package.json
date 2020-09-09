@@ -1,6 +1,6 @@
 {
   "name": "prinz-eugen",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Prinz Eugen, discord bot for Azur Lane",
   "main": "src/main.ts",
   "scripts": {
@@ -31,7 +31,7 @@
     "@types/request-promise": "^4.1.46",
     "@types/ws": "^7.2.4",
     "cron": "^1.8.2",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.3.1",
     "fs-extra": "^9.0.0",
     "i18next": "^19.4.2",
     "i18next-node-fs-backend": "^2.1.3",

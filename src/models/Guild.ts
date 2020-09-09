@@ -23,6 +23,19 @@ export const GuildSchema = new Schema({
     type: String,
     default: 'en-US'
   },
+  prinzChannelId: {
+    type: String
+  },
+  notification: {
+    en: {
+      notificationChannelId: {
+        type: String
+      },
+      lastNotification: {
+        type: String
+      }
+    }
+  },
   created_date: {
     type: Date,
     default: Date.now

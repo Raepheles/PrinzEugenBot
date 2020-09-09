@@ -53,6 +53,8 @@ async function start() {
   }
 
   const conn = await createConnection(config.mongoUrl, {
+    useFindAndModify: false,
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
@@ -60,6 +62,7 @@ async function start() {
   const client = new Cluster(conn, logger, ships, unreleasedShips, equipments, date);
   await client.commands.init();
   await client.events.init();
+  await client.notificationHandler.init();
   await client.login(client.config.token);
 
   const cronJob = new CronJob('0 3 * * *', async () => {

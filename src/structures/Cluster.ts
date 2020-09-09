@@ -10,6 +10,7 @@ import i18n from '../i18n';
 import { GuildSettingsList } from '../types/GuildSettings';
 import { ShipAlias, Ship, UnreleasedShip, Equipment } from '../types/ParseData';
 import { TranslateArgs } from '../types/TranslateArgs';
+import NotificationHandler from '../handlers/NotificationHandler';
 
 export default class Cluster extends Client {
   public logger: Logger;
@@ -24,6 +25,7 @@ export default class Cluster extends Client {
   public shipAliases: ShipAlias[] = [];
   public i18n: Map<string, TFunction> = new Map();
   public discordLogger = new DiscordLogger(this);
+  public notificationHandler = new NotificationHandler(this);
   public commands = new CommandHandler(this);
   public events = new EventHandler(this);
 
@@ -47,6 +49,8 @@ export default class Cluster extends Client {
       throw new Error('Use init() method on CommandHandler first.');
     } else if(!this.events.isInit) {
       throw new Error('Use init() method on EventHandler first.');
+    } else if(!this.notificationHandler.isInit) {
+      throw new Error('Use init() method on NotificationHandler first.');
     }
     this.i18n = await i18n();
     return super.login(token);

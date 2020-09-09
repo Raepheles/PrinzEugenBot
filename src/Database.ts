@@ -45,6 +45,62 @@ export async function getGuild(client: Cluster, guildId: string) {
   });
 }
 
+export async function setPrinzChannel(client: Cluster, guildId: string, prinzChannelId: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { prinzChannelId }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].prinzChannelId = prinzChannelId;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
+export async function setPrefix(client: Cluster, guildId: string, prefix: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { prefix }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].prefix = prefix;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
+export async function setNotificationChannel(client: Cluster, guildId: string, notificationChannelId: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.notificationChannelId': notificationChannelId }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].notification = doc.toJSON().notification;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
+export async function setLastNotification(client: Cluster, guildId: string, lastNotification: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.lastNotification': lastNotification }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].notification = doc.toJSON().notification;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
 export function getShipAliases(client: Cluster): Promise<ShipAlias[]> {
   return new Promise<ShipAlias[]>((resolve, reject) => {
     const shipAliases: ShipAlias[] = [];
