@@ -30,7 +30,7 @@ export default class NotificationHandler {
             const currentSettings = this.client.guildSettings[key];
             const notificationChannelId = currentSettings.notification?.en.notificationChannelId;
             const lastNotification = currentSettings.notification?.en.lastNotification;
-            if(!lastNotification) {
+            if(notificationChannelId && !lastNotification) {
               try {
                 await setLastNotification(this.client, key, news[0].content);
               } catch(err) {
