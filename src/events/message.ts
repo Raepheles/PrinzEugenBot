@@ -56,7 +56,7 @@ export default class extends Event {
         .setDescription(this.client.translate('common:COMMAND_PARSE_ERROR', { guild: message.guild }))
         .setColor(Colors.ERROR_COLOR)
         .setTimestamp()
-      ).catch(this.client.logger.error);
+      ).catch(err => this.client.logger.error(err));
     }
 
     if(!command) return;
@@ -94,7 +94,7 @@ export default class extends Event {
           .setDescription(this.client.translate('common:COMMAND_EXECUTE_ERROR', { guild: message.guild }))
           .setColor(Colors.ERROR_COLOR)
           .setTimestamp()
-        ).catch(this.client.logger.error);
+        ).catch(err => this.client.logger.error(err));
         command.postExecute(message, err);
       }
     }

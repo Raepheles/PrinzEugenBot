@@ -57,10 +57,10 @@ export default class NotificationHandler {
               // We are missing all notifications or something is buggy.
               // Just send last notification
               this.sendNotification(channel, news, key, 1)
-                .catch(this.client.logger.error);
+                .catch(err => this.client.logger.error(err));
             } else {
               this.sendNotification(channel, news, key, lastIndex)
-                .catch(this.client.logger.error);
+                .catch(err => this.client.logger.error(err));
             }
           }
         });
