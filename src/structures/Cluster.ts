@@ -8,8 +8,9 @@ import { Connection } from 'mongoose';
 import { TFunction } from 'i18next';
 import i18n from '../i18n';
 import { GuildSettingsList } from '../types/GuildSettings';
-import { ShipAlias, Ship, UnreleasedShip } from '../types/Ship';
+import { ShipAlias, Ship, UnreleasedShip, Equipment } from '../types/ParseData';
 import { TranslateArgs } from '../types/TranslateArgs';
+import NotificationHandler from '../handlers/NotificationHandler';
 
 export default class Cluster extends Client {
   public logger: Logger;
@@ -19,14 +20,20 @@ export default class Cluster extends Client {
   public botVersion: string = process.env.npm_package_version || 'N/A';
   public ships: Ship[];
   public unreleasedShips: UnreleasedShip[];
+  public equipments: Equipment[];
   public config = config;
   public shipAliases: ShipAlias[] = [];
   public i18n: Map<string, TFunction> = new Map();
   public discordLogger = new DiscordLogger(this);
+  public notificationHandler = new NotificationHandler(this);
   public commands = new CommandHandler(this);
   public events = new EventHandler(this);
 
-  public constructor(conn: Connection, logger: Logger, ships: Ship[], unreleasedShips: UnreleasedShip[], lastDataUpdate: Date) {
+  public constructor(conn: Connection,
+    logger: Logger, ships: Ship[],
+    unreleasedShips: UnreleasedShip[],
+    equipments: Equipment[],
+    lastDataUpdate: Date) {
     super();
     this.logger = logger;
     this.guildSettings = {};
@@ -34,6 +41,7 @@ export default class Cluster extends Client {
     this.ships = ships;
     this.lastDataUpdate = lastDataUpdate;
     this.unreleasedShips = unreleasedShips;
+    this.equipments = equipments;
   }
 
   public async login(token: string): Promise<string> {
@@ -41,6 +49,8 @@ export default class Cluster extends Client {
       throw new Error('Use init() method on CommandHandler first.');
     } else if(!this.events.isInit) {
       throw new Error('Use init() method on EventHandler first.');
+    } else if(!this.notificationHandler.isInit) {
+      throw new Error('Use init() method on NotificationHandler first.');
     }
     this.i18n = await i18n();
     return super.login(token);

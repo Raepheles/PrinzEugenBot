@@ -1,7 +1,7 @@
 # we only push config.example.json
 config.json
-# bot should parse ships and create ships.json
-ships.json
+
+data.json
 
 log
 dist

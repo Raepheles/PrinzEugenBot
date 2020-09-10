@@ -9,6 +9,8 @@ export class Colors {
   public static ELITE_COLOR: ColorResolvable = [221, 160, 221];
   public static SUPER_RARE_COLOR: ColorResolvable = [238, 232, 170];
   public static ULTRA_RARE_COLOR: ColorResolvable = [200, 255, 0];
+  public static NOTIFICATION_UPDATE: ColorResolvable = [67, 129, 204];
+  public static NOTIFICATION_EVENT: ColorResolvable = [190, 77, 77];
 }
 
 export function getColorForRarity(rarity: string, retrofit?: boolean) {

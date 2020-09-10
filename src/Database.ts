@@ -3,7 +3,7 @@ import { Guild } from 'discord.js';
 import { GuildSchema } from './models/Guild';
 import { GuildSettings } from './types/GuildSettings';
 import { Document } from 'mongoose';
-import { ShipAlias } from './types/Ship';
+import { ShipAlias } from './types/ParseData';
 import { AliasSchema } from './models/Alias';
 
 /**
@@ -40,6 +40,62 @@ export async function getGuild(client: Cluster, guildId: string) {
     GuildModel.findById(guildId, (err, doc: Document) => {
       if(err) reject(err);
       if(doc) resolve(doc.toJSON());
+      reject();
+    });
+  });
+}
+
+export async function setPrinzChannel(client: Cluster, guildId: string, prinzChannelId: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { prinzChannelId }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].prinzChannelId = prinzChannelId;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
+export async function setPrefix(client: Cluster, guildId: string, prefix: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { prefix }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].prefix = prefix;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
+export async function setNotificationChannel(client: Cluster, guildId: string, notificationChannelId: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.notificationChannelId': notificationChannelId }, { new: true }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].notification = doc.toJSON().notification;
+        resolve();
+      }
+      reject();
+    });
+  });
+}
+
+export async function setLastNotification(client: Cluster, guildId: string, lastNotification: string) {
+  return new Promise<void>((resolve, reject) => {
+    const GuildModel = client.database.model('guild', GuildSchema);
+    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.lastNotification': lastNotification }, { new: true }, (err, doc: Document | null) => {
+      if(err) reject(err);
+      if(doc) {
+        client.guildSettings[guildId].notification = doc.toJSON().notification;
+        resolve();
+      }
       reject();
     });
   });

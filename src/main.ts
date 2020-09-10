@@ -3,7 +3,7 @@ import { createConnection } from 'mongoose';
 import config from '../config.json';
 import { CronJob } from 'cron';
 import { readFile } from 'fs-extra';
-import { Ship, ShipParse, UnreleasedShip } from './types/Ship';
+import { Ship, ParseData, UnreleasedShip, Equipment } from './types/ParseData';
 import { Parser } from './Parser';
 import { getLogger, configure } from 'log4js';
 import { writeFile } from 'fs-extra';
@@ -39,77 +39,88 @@ async function start() {
   let ships;
   let date;
   let unreleasedShips;
+  let equipments;
 
   try {
-    const obj = await loadOrParseShips();
+    const obj = await loadOrParseData();
     ships = obj.ships;
     unreleasedShips = obj.unreleasedShips;
+    equipments = obj.equipments;
     date = obj.date;
   } catch(err) {
-    logger.error(`Got error while parsing the ships and there is no ship data present. Exiting the app. Error: ${err}`);
+    logger.error(`Got error while parsing the data and there is no data present. Exiting the app. Error: ${err}`);
     process.exit(1);
   }
 
   const conn = await createConnection(config.mongoUrl, {
+    useFindAndModify: false,
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
 
-  const client = new Cluster(conn, logger, ships, unreleasedShips, date);
+  const client = new Cluster(conn, logger, ships, unreleasedShips, equipments, date);
   await client.commands.init();
   await client.events.init();
+  await client.notificationHandler.init();
   await client.login(client.config.token);
 
   const cronJob = new CronJob('0 3 * * *', async () => {
-    parseShips(client);
+    parseData(client);
   }, null, true, 'Europe/Istanbul');
   cronJob.start();
 }
 
 
-async function loadOrParseShips() {
+async function loadOrParseData() {
   try {
-    return await loadShips();
+    return await loadData();
   } catch(err) {
-    logger.error(`There was an error while loading ships: ${err}`);
+    logger.error(`There was an error while loading data: ${err}`);
   }
-  return await parseShips();
+  return await parseData();
 }
 
-async function loadShips() {
-  const buffer = await readFile(`${config.shipsFileName}.json`, 'utf8');
+async function loadData() {
+  const buffer = await readFile(`${config.dataFileName}.json`, 'utf8');
   const obj = JSON.parse(buffer);
-  if(!obj.date || !obj.ships || !obj.unreleasedShips) throw Error(`Invalid ${config.shipsFileName}.json`);
+  if(!obj.date || !obj.ships || !obj.unreleasedShips || !obj.equipments) throw Error(`Invalid ${config.dataFileName}.json`);
   const date = new Date(obj.date);
   const ships: Ship[] = obj.ships;
   const unreleasedShips: UnreleasedShip[] = obj.unreleasedShips;
+  const equipments: Equipment[] = obj.equipments;
   return {
     date,
     ships,
-    unreleasedShips
+    unreleasedShips,
+    equipments
   };
 }
 
-async function parseShips(client?: Cluster) {
-  const parser = new Parser(logger, config.wikiBaseUrl, config.shipListUrl);
-  const parseData: ShipParse = await parser.parse();
-  const ships = parseData.ships;
-  const date = parseData.date;
-  const unreleasedShips = parseData.unreleasedShips;
+async function parseData(client?: Cluster) {
+  const parser = new Parser(logger, config.wikiBaseUrl, config.shipListUrl, config.equipmentListUrl);
+  const data: ParseData = await parser.parse();
+  const ships = data.ships;
+  const date = data.date;
+  const unreleasedShips = data.unreleasedShips;
+  const equipments = data.equipments;
   const obj = {
     date,
     ships,
-    unreleasedShips
+    unreleasedShips,
+    equipments
   };
   if(client) {
     client.lastDataUpdate = date;
     client.ships = ships;
     client.unreleasedShips = unreleasedShips;
+    client.equipments = equipments;
   }
-  await writeFile(`${config.shipsFileName}.json`, JSON.stringify(obj));
+  await writeFile(`${config.dataFileName}.json`, JSON.stringify(obj));
   return {
     date,
     ships,
-    unreleasedShips
+    unreleasedShips,
+    equipments
   };
 }

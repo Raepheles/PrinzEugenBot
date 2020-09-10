@@ -4,7 +4,7 @@ import { getShipNameForAlias, getShip, getUnreleasedShip } from '../../utils/Shi
 import { CommandExecArgs } from '../../types/CommandExecArgs';
 import Flag from '../../structures/Flag';
 import { Colors, getColorForRarity } from '../../utils/ColorUtils';
-import { ShipStats } from '../../types/Ship';
+import { ShipStats } from '../../types/ParseData';
 
 export default class extends Command {
   dm = true;
@@ -122,7 +122,7 @@ export default class extends Command {
         embed.addField('Skills', skills.join('\n'), false);
       }
 
-      embed.addField('Misc', misc.join('\n'), false);
+      if(misc.length !== 0) embed.addField('Misc', misc.join('\n'), false);
 
       if(ship.images.icon) embed.setThumbnail(ship.images.icon);
 

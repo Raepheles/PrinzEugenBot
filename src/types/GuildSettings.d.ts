@@ -4,8 +4,15 @@ export interface GuildSettings {
   ownerId: string;
   prefix: string;
   language: string;
+  prinzChannelId: string;
+  notification?: { [key: string]: NotificationSettings };
   created_date: Date;
   last_update: Date;
+}
+
+export interface NotificationSettings {
+  notificationChannelId: string;
+  lastNotification: string;
 }
 
 export interface GuildSettingsList {

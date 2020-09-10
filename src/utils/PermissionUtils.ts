@@ -34,6 +34,6 @@ export function getPermissionName(bit: BitFieldResolvable<PermissionString>): st
     case '10000000': return 'MANAGE_ROLES';
     case '20000000': return 'MANAGE_WEBHOOKS';
     case '40000000': return 'MANAGE_EMOJIS';
-    default: return 'UNKOWN_PERMISSION_BIT';
+    default: return bit.toString();
   }
 }

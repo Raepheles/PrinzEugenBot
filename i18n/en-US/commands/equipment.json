@@ -1,0 +1,7 @@
+{
+  "COMMAND_DESCRIPTION": "Shows information of equipment. By default bot will show highest type (0, 3, 2, 1) of equipment. Use flags if you wanna see different type. If you didn't type exact name of the equipment bot will show you the closest match if there is one.",
+  "COMMAND_USAGE": "`{{prefix}}equipment [equipment-name] (flags)`\nExamples:\n`{{prefix}}equipment 533mm quadruple homing torpedo`",
+  "EQUIPMENT_TYPE_NOT_FOUND": "Couldn't find `{{type}}` for `{{equipmentName}}`.",
+  "NO_EQUIPMENT_TYPE": "There are no types of `{{equipmentName}}`. This might be a bug or this equipment's wiki page might be incomplete. If it is bug please report it.",
+  "EQUIPMENT_NOT_FOUND": "Couldn't find any equipment with name `{{equipmentName}}`."
+}

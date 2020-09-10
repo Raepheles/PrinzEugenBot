@@ -18,6 +18,7 @@ export default class Command {
   aliases: string[];
   requiredPerms: PermissionResolvable[];
   dm: boolean;
+  admin: boolean;
 
   constructor(client: Cluster, name: string, module: string, path: string, options?: CommandOptions) {
     this.client = client;
@@ -32,6 +33,7 @@ export default class Command {
     this.aliases = (options && options.aliases) || [];
     this.dm = (options && options.dm) || false;
     this.requiredPerms = (options && options.requiredPerms) || [];
+    this.admin = (options && options.admin) || false;
   }
 
   getEmbed(guild: Guild | null, args?: object): MessageEmbed {

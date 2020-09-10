@@ -4,13 +4,15 @@
   "token": "",
   "prefix": "!",
   "id": "",
+  "ownerId": "",
   "supportServer": "https://discord.gg/inviteCode",
   "logChannelId": "",
   "mongoUrl": "mongo connection string",
   "feedbackChannelId": "",
-  "shipsFileName": "ships",
+  "dataFileName": "data",
   "wikiBaseUrl": "https://azurlane.koumakan.jp",
   "shipListUrl": "https://azurlane.koumakan.jp/List_of_Ships",
+  "equipmentListUrl": "https://azurlane.koumakan.jp/Equipment_List",
   "antiSpam": {
     "maxMessages": 5,
     "timeout": 30000

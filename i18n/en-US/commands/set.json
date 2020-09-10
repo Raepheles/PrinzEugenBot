@@ -1,0 +1,13 @@
+{
+  "COMMAND_DESCRIPTION": "This commands allows you to change bot settings for the server. It must be used with an `option` parameter. Below are the accepted options.\n**prinzchannel**: Sets the current channel as prinz channel. News regarding the bot will be posted in this channel. .\n**notificationchannel**: Sets the current channel as notification channel. Game news posted on the front page of [wiki](https://azurlane.koumakan.jp/) will be posted in this channel.\n**prefix**: Sets the prefix of the bot in this server.",
+  "COMMAND_USAGE": "`{{prefix}}set [option]`\nExamples:\n`{{prefix}}set prinzchannel`\n`{{prefix}}set notificationchannel`\n`{{prefix}}set prefix p!`",
+  "ERROR_PRINZ_CHANNEL": "There was an **error** while setting {{ping}} as prinz channel. This is most likely not about you. Please try again later. If the issue persists make sure to report it using `feedback` command.",
+  "SUCCESS_PRINZ_CHANNEL": "{{ping}} has successfully been set as prinz channel.",
+  "SUCCESS_NOTIFICATION_CHANNEL": "{{ping}} has successfully been set as notification channel.",
+  "ERROR_NOTIFICATION_CHANNEL": "There was an **error** while setting {{ping}} as notification channel. This is most likely not about you. Please try again later. If the issue persists make sure to report it using `feedback` command.",
+  "ERROR_PREFIX": "There was an **error** while setting {{prefix}} as prefix. This is most likely not about you. Please try again later. If the issue persists make sure to report it using `feedback` command.",
+  "SUCCESS_PREFIX": "`{{prefix}}` has successfully been set as new prefix.",
+  "PREFIX_LENGTH": "Your prefix is too long. Max length for prefixes is `3`.",
+  "MISSING_PREFIX": "Please type the new prefix after command. Example: `{{prefix}}set prefix p!`",
+  "UNKNOWN_OPTION": "Unknown option: `{{option}}`"
+}

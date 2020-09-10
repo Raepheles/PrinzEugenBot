@@ -1,4 +1,4 @@
-import { ShipAlias, Ship, UnreleasedShip } from '../types/Ship';
+import { ShipAlias, Ship, UnreleasedShip } from '../types/ParseData';
 
 export function getShipNameForAlias(alias: string, shipAliases: ShipAlias[], guildId?: string): string {
   const filtered = shipAliases.filter(a => {

@@ -40,7 +40,7 @@ export default class extends Command {
       const param = params.join(' ');
       const filtered = this.client.commands.filter(comm => comm.name === param || comm.aliases.includes(param));
       const command = filtered.first();
-      if(!command) {
+      if(!command || (command.admin && message.author.id !== this.client.config.ownerId) ) {
         embed.setTitle(this.client.translate('commands/help:COMMAND_NOT_FOUND_TITLE', { guild }))
           .setDescription(this.client.translate('commands/help:COMMAND_NOT_FOUND_DESCRIPTION', { guild }));
       } else {
@@ -57,6 +57,7 @@ export default class extends Command {
         }
       }));
       for(const key in modules) {
+        if(key === 'Admin') continue;
         if(!key) continue;
         const str = modules[key].join(', ');
         embed.addField(key, str, true);

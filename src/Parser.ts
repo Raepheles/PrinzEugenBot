@@ -1,27 +1,57 @@
-import { ShipWrapper, Ship, ShipSkill, ShipStats, ShipImages, ShipMisc, ShipConstruction, ShipRetrofit, UnreleasedShip, ShipParse } from './types/Ship';
+import { ShipWrapper, Ship, ShipSkill, ShipStats, ShipImages, ShipMisc, ShipConstruction, ShipRetrofit, UnreleasedShip, ParseData, Equipment, EquipmentType, EquipmentStats } from './types/ParseData';
 import request from 'request-promise';
 import { JSDOM } from 'jsdom';
 import { Logger } from 'log4js';
 import { getTimeFromMs } from './utils/TimeUtils';
 
+interface ShipData {
+  ships: Ship[];
+  unreleasedShips: UnreleasedShip[];
+}
+
+interface EquipmentMisc {
+  obtainedFrom?: string;
+  notes?: string;
+}
+
+interface EquipmentUsers {
+  mainUsers: string[];
+  secondaryUsers?: string[];
+}
+
 export class Parser {
   logger: Logger;
   wikiUrl: string;
   shipsUrl: string;
+  equipmentsUrl: string;
 
-  constructor(logger: Logger, wikiUrl: string, shipsUrl: string) {
+  constructor(logger: Logger, wikiUrl: string, shipsUrl: string, equipmentsUrl: string) {
     this.logger = logger;
     this.wikiUrl = wikiUrl;
     this.shipsUrl = shipsUrl;
+    this.equipmentsUrl = equipmentsUrl;
   }
 
-  public async parse(): Promise<ShipParse> {
+  public async parse(): Promise<ParseData> {
+    const { ships, unreleasedShips } = await this.parseShips();
+    const equipments = await this.parseEquipments();
+    return {
+      date: new Date(),
+      ships,
+      unreleasedShips,
+      equipments
+    };
+  }
+
+  public async parseShips(): Promise<ShipData> {
     const start = Date.now();
     this.logger.info('Started parsing ships.');
     const shipWrappers: ShipWrapper[] = await this.getShipList();
-    this.logger.info('Parsed ship list');
+    this.logger.info(`Parsed ship list in ${getTimeFromMs(Date.now() - start, true)}`);
     const ships: Ship[] = [];
     const unreleasedShips: UnreleasedShip[] = [];
+    const total = shipWrappers.length;
+    let failed = 0;
 
     for(const shipWrapper of shipWrappers) {
       try {
@@ -31,15 +61,228 @@ export class Parser {
         if('image' in ship) unreleasedShips.push(ship as UnreleasedShip);
         else ships.push(ship as Ship);
       } catch(err) {
+        failed++;
         const errStr = `${err}`;
         this.logger.error(`Error while parsing ${shipWrapper.name}: ${errStr.length >= 128 ? errStr.substr(0, 127) : errStr}`);
       }
     }
-    this.logger.info(`Parsed ships in ${getTimeFromMs(Date.now() - start, true)}`);
+    this.logger.info(`Parsed ${total - failed} ships out of ${total} in ${getTimeFromMs(Date.now() - start, true)}`);
     return {
-      date: new Date(),
       ships,
       unreleasedShips
+    };
+  }
+
+  public async parseEquipments(): Promise<Equipment[]> {
+    const start = Date.now();
+    this.logger.info('Started parsing equipments.');
+    const equipmentNames: string[] = await this.getEquipmentList();
+    this.logger.info(`Parsed equipment list in ${getTimeFromMs(Date.now() - start, true)}`);
+    const equipments: Equipment[] = [];
+    const total = equipmentNames.length;
+    let failed = 0;
+
+    for(const equipmentName of equipmentNames) {
+      try {
+        const equipmentParseStart = Date.now();
+        const equipment = await this.getEquipment(equipmentName);
+        this.logger.trace(`Parsed ${equipmentName} in ${getTimeFromMs(Date.now() - equipmentParseStart, true)}`);
+        equipments.push(equipment);
+      } catch(err) {
+        failed++;
+        const errStr = `${err}`;
+        this.logger.error(`Error while parsing ${equipmentName}: ${errStr.length >= 128 ? errStr.substr(0, 127) : errStr}`);
+      }
+    }
+    this.logger.info(`Parsed ${total - failed} equipments out of ${total} in ${getTimeFromMs(Date.now() - start, true)}`);
+    return equipments;
+  }
+
+  private async getEquipmentList(): Promise<string[]> {
+    const mainBody = await request(this.equipmentsUrl);
+    const mainDoc = new JSDOM(mainBody).window.document;
+
+    const equipmentNames: string[] = [];
+
+    const list = mainDoc.getElementById('Equipment_Lists')?.parentElement?.nextElementSibling?.children;
+    if(!list) throw Error("Couldn't find <ul> children in equipment lists page.");
+
+    for(const li of list) {
+      const href = li.firstElementChild?.getAttribute('href');
+      if(!href) continue;
+      const body = await request(this.wikiUrl + href);
+      const doc = new JSDOM(body).window.document;
+
+      const tbody = doc.querySelector('.tabbertab > table')?.getElementsByTagName('tbody').item(0);
+      if(!tbody) throw Error("Couldn't find tbody under first element with tabbertab class.");
+
+      for(const td of tbody.children) {
+        const name = td.firstElementChild?.textContent?.trim();
+        if(!name || equipmentNames.includes(name)) continue;
+        equipmentNames.push(name);
+      }
+    }
+
+    return equipmentNames;
+  }
+
+  private async getEquipment(equipmentName: string): Promise<Equipment> {
+    const url = `${this.wikiUrl}/${encodeURI(equipmentName)}`;
+    const body = await request(url);
+    const doc = new JSDOM(body).window.document;
+
+    const name = equipmentName;
+    let image = doc.querySelector('.image > img')?.getAttribute('src') || undefined;
+    if(image) image = this.wikiUrl + image;
+    let type1: EquipmentType | undefined;
+    let type2: EquipmentType | undefined;
+    let type3: EquipmentType | undefined;
+    let type0: EquipmentType | undefined;
+
+    const eqBoxes = doc.getElementsByClassName('eq-box');
+    if(!eqBoxes) throw Error(`Couldn't find elements with class 'eq-box' for ${equipmentName}`);
+
+    const firstEqBox = eqBoxes.item(0);
+    if(!firstEqBox) throw Error(`eqBoxes is empty for ${equipmentName}`);
+
+    // Parsing head
+    const eqHead = firstEqBox.getElementsByClassName('eq-head').item(0);
+    if(!eqHead) throw Error(`Couldn't find eq-head under eq-box for ${equipmentName}`);
+
+    const eqInfo = eqHead.querySelector('.eq-gen > .eq-info');
+    if(!eqInfo) throw Error(`Couldn't find eq-info under eq-gen for ${equipmentName}}`);
+
+    const eqInfoTbody = eqInfo.getElementsByTagName('tbody').item(0);
+    if(!eqInfoTbody) throw Error(`Couldn't find tbody under eq-info for ${equipmentName}`);
+
+    const tds = eqInfoTbody.getElementsByTagName('td');
+    if(!tds) throw Error(`Couldn't find any td under tbody under eq-info for ${equipmentName}`);
+
+    const type = tds.item(0)?.textContent?.trim();
+    const nation = tds.item(2)?.textContent?.trim();
+    if(!type || !nation) {
+      throw Error(`Couldn't get type, rarity or nation for ${equipmentName}`);
+    }
+
+    const { mainUsers, secondaryUsers } = this.getEquipmentUsers(firstEqBox, equipmentName);
+
+    for(const eqBox of eqBoxes) {
+      const eqBoxHead = eqBox.getElementsByClassName('eq-head').item(0);
+      if(!eqBoxHead) throw Error(`Couldn't find eq-head for ${equipmentName}`);
+
+      const tier = eqBoxHead.querySelector('.eq-title > .eqtech')?.textContent;
+      if(!tier) throw Error(`Couldn't find equipment tier for ${equipmentName}`);
+
+      const rarity = eqBox.getElementsByClassName('eq-head')
+      .item(0)
+      ?.querySelector('.eq-gen > .eq-info')
+      ?.getElementsByTagName('tbody').item(0)
+      ?.getElementsByTagName('td')
+      .item(1)
+      ?.textContent
+      ?.trim()
+      .replace(/★/g, '');
+      if(!rarity) throw Error(`Couldn't get rarity for ${equipmentName} - ${tier}`);
+
+      const stats = this.getEquipmentStats(eqBox, equipmentName, tier);
+      const { obtainedFrom, notes } = this.getEquipmentMisc(eqBox);
+      const tmp: EquipmentType = {
+        stats,
+        rarity,
+        obtainedFrom,
+        notes
+      };
+      switch(tier) {
+        case 'T0':
+          type0 = tmp;
+          break;
+        case 'T1':
+          type1 = tmp;
+          break;
+        case 'T2':
+          type2 = tmp;
+          break;
+        case 'T3':
+          type3 = tmp;
+          break;
+        default:
+          throw Error(`Unknown tier ${tier} for ${equipmentName}`);
+      }
+    }
+
+    return {
+      name,
+      url,
+      image,
+      mainUsers,
+      secondaryUsers,
+      type,
+      nation,
+      type1,
+      type2,
+      type3,
+      type0
+    };
+  }
+
+  private getEquipmentStats(eqBox: Element, eqName: string, eqTier: string): EquipmentStats {
+    const eqStatsTbody = eqBox.getElementsByClassName('eq-stats').item(0)?.getElementsByTagName('tbody').item(0);
+    if(!eqStatsTbody) throw Error(`Couldn't find eq-stats tbody for ${eqName} - ${eqTier}`);
+
+    const eqStats: EquipmentStats = {};
+
+    for(const child of eqStatsTbody.children) {
+      if(child.children.length !== 2) continue;
+      const key = child.firstElementChild?.firstElementChild?.getAttribute('alt') || child.firstElementChild?.textContent?.trim();
+      const value = child.lastElementChild?.textContent?.trim();
+      if(!key || !value) continue;
+      eqStats[key] = value;
+    }
+
+    return eqStats;
+  }
+
+  private getEquipmentMisc(eqBox: Element): EquipmentMisc {
+    let obtainedFrom: string | undefined;
+    let notes: string | undefined;
+
+    const trs = eqBox.getElementsByTagName('tr');
+    for(const tr of trs) {
+      const thContent = tr.firstElementChild?.textContent?.toLowerCase().trim();
+      const tdContent = tr.lastElementChild?.textContent?.trim();
+      if(thContent === 'obtained from') {
+        obtainedFrom = tdContent;
+      } else if(thContent === 'notes') {
+        notes = tdContent;
+      }
+    }
+
+    return {
+      obtainedFrom,
+      notes
+    };
+  }
+
+  private getEquipmentUsers(eqBox: Element, eqName: string): EquipmentUsers {
+    const trs = eqBox.getElementsByClassName('eq-fits').item(0)?.getElementsByTagName('tr');
+    if(!trs) throw Error(`Couldn't find <tr> elements under eq-fits for ${eqName}`);
+
+    const mainUsers: string[] = [];
+    const secondaryUsers: string[] = [];
+
+    for(const tr of trs) {
+      const tdFirst = tr.firstElementChild?.textContent?.trim();
+      const tdLastClass = tr.lastElementChild?.getAttribute('class');
+      if(!tdFirst || !tdLastClass) continue;
+      if(tdLastClass === 'yes') {
+        mainUsers.push(tdFirst);
+      } else if(tdLastClass === 'maybe') {
+        secondaryUsers.push(tdFirst);
+      }
+    }
+    return {
+      mainUsers,
+      secondaryUsers: secondaryUsers.length !== 0 ? secondaryUsers : undefined
     };
   }
 
@@ -91,21 +334,7 @@ export class Parser {
     const id = shipWrapper.code;
     const rarity = shipWrapper.rarity;
 
-    // If ship is not released
-/*     if(doc.querySelectorAll(`a[href="/${this.urlEncode(name)}/Gallery"]`).length === 0) {
-      const imageQuerySelector = doc.querySelector(`[alt*="${name}"`);
-      let image = imageQuerySelector?.getAttribute('src');
-      if(!image) image = undefined;
-      else image = this.wikiUrl + image;
-      const unreleasedShip: UnreleasedShip = {
-        name,
-        id,
-        rarity,
-        image,
-        url: `${this.wikiUrl}/${this.urlEncode(name)}`
-      };
-      return unreleasedShip;
-    } */
+    // Check if ship is unreleased
     let unreleased = false;
     const els = doc.getElementsByClassName('mw-parser-output').item(0)?.children;
     if(!els) {
@@ -263,7 +492,7 @@ export class Parser {
 
     if(retrofit && key !== 'base') title = `${title} Retrofit`;
     const selector = doc.querySelectorAll(`[title="${title}"]`);
-    const el = selector.length > 1 ? selector.item(0) : undefined;
+    const el = selector.length >= 1 ? selector.item(0) : undefined;
     if(!el) throw Error(`Couldn't find ${key} stats for ${shipName}`);
 
     const tables = el.getElementsByTagName('table');
@@ -383,6 +612,15 @@ export class Parser {
     const types: boolean[] = [];
 
     const tbody = el.firstElementChild?.firstElementChild;
+    if(!tbody) {
+      // Construction table couldn't be found. It might be research ship.
+      return {
+        text: '**Type:**\n**Time: Research Only**',
+        drop: undefined,
+        additional: undefined,
+        time: 'Research Only'
+      };
+    }
     const constTime = tbody?.children.item(1)?.children.item(0)?.textContent?.trim();
     if(!tbody) throw Error(`Couldn't get tbody from Construction table for ${shipName}`);
     if(!constTime) throw Error(`Couldn't get construction time from construction table for ${shipName}`);
@@ -527,7 +765,7 @@ export class Parser {
   }
 
   private urlEncode(name: string): string {
-    return encodeURI(name).replace(/%20/g, '_');
+    return encodeURI(name);
   }
 
 }

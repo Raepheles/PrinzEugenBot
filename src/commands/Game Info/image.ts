@@ -9,6 +9,7 @@ import { getReactionFromNumber, getNumberFromReaction } from '../../utils/Reacti
 export default class extends Command {
   dm = true;
   minParam = 1;
+  aliases = ['img'];
   acceptedFlags = [
     new Flag('skins', 1),
     new Flag('skin', 1),
@@ -78,7 +79,8 @@ export default class extends Command {
       const collector = response.createReactionCollector(reactionFilter, { time: timeout * 1000, dispose: true });
 
       for(let i = 1; i <= maxChoices; i++) {
-        response.react(getReactionFromNumber(i)).catch(err => err);
+        await response.react(getReactionFromNumber(i))
+          .catch(err => this.client.logger.error(`Error while adding reaction in image command: ${err}`));
       }
 
       const reactionHandle = (reaction: MessageReaction) => {
@@ -103,7 +105,8 @@ export default class extends Command {
 
     } else if(ship) {
       embed.setTitle(`${ship.id} - ${ship.name}`)
-      .setURL(`${ship.url}`);
+      .setURL(`${ship.url}`)
+      .setColor(getColorForRarity(ship.rarity));
 
       if(chibiFlag && ship.images.chibi) {
         embed.setImage(ship.images.chibi);
