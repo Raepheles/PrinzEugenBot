@@ -76,7 +76,7 @@ export async function setPrefix(client: Cluster, guildId: string, prefix: string
 export async function setNotificationChannel(client: Cluster, guildId: string, notificationChannelId: string) {
   return new Promise<void>((resolve, reject) => {
     const GuildModel = client.database.model('guild', GuildSchema);
-    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.notificationChannelId': notificationChannelId }, (err, doc: Document | null) => {
+    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.notificationChannelId': notificationChannelId }, { new: true }, (err, doc: Document | null) => {
       if(err) reject(err);
       if(doc) {
         client.guildSettings[guildId].notification = doc.toJSON().notification;
@@ -90,7 +90,7 @@ export async function setNotificationChannel(client: Cluster, guildId: string, n
 export async function setLastNotification(client: Cluster, guildId: string, lastNotification: string) {
   return new Promise<void>((resolve, reject) => {
     const GuildModel = client.database.model('guild', GuildSchema);
-    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.lastNotification': lastNotification }, (err, doc: Document | null) => {
+    GuildModel.findByIdAndUpdate(guildId, { 'notification.en.lastNotification': lastNotification }, { new: true }, (err, doc: Document | null) => {
       if(err) reject(err);
       if(doc) {
         client.guildSettings[guildId].notification = doc.toJSON().notification;

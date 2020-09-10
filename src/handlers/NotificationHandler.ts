@@ -24,7 +24,7 @@ export default class NotificationHandler {
 
   init() {
     return new Promise<void>(resolve => {
-      this.cronJob = new CronJob('*/30 * * * *', () => {
+      this.cronJob = new CronJob('11 * * * *', () => {
         this.getNews().then(async news => {
           for(const key of Object.keys(this.client.guildSettings)) {
             const currentSettings = this.client.guildSettings[key];
