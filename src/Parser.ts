@@ -194,7 +194,6 @@ export class Parser {
     const name = equipmentName;
     let image =
       doc.querySelector(".image > img")?.getAttribute("src") || undefined;
-    if (image) image = this.wikiUrl + image;
     let type1: EquipmentType | undefined;
     let type2: EquipmentType | undefined;
     let type3: EquipmentType | undefined;
@@ -457,7 +456,6 @@ export class Parser {
       if (!image) {
         image = undefined;
       } else {
-        image = this.wikiUrl + image;
         image = image.substr(0, image.indexOf(".png")) + ".png";
         image = image.replace(/\/thumb/g, "");
       }
@@ -688,7 +686,7 @@ export class Parser {
     if (!iconUrl)
       throw Error(`Couldn't get icon url from icon element for ${shipName}`);
 
-    images.icon = this.wikiUrl + iconUrl;
+    images.icon = iconUrl;
 
     for (const el of imageElements) {
       if (el.classList.contains("tabbernav")) continue;
@@ -909,18 +907,18 @@ export class Parser {
     }
 
     if (name.toLowerCase() === "default") {
-      images.default = this.wikiUrl + skinUrl;
-      if (chibiUrl) images.chibi = this.wikiUrl + chibiUrl;
+      images.default = skinUrl;
+      if (chibiUrl) images.chibi = chibiUrl;
     } else {
       if (!images.skins) images.skins = [];
       if (!images.chibis) images.chibis = [];
       const skinImage = {
         name,
-        url: this.wikiUrl + skinUrl,
+        url: skinUrl || '',
       };
       const skinChibiImage = {
         name,
-        url: this.wikiUrl + chibiUrl,
+        url: chibiUrl || '',
       };
       images.skins.push(skinImage);
       if (!images.chibis.find((c) => c.name === name) && chibiUrl) {
