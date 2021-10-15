@@ -564,11 +564,11 @@ export class Parser {
             continue;
           }
 
-          let skillName = skillElement.children[2].textContent?.trim();
+          let skillName = skillElement.children[3].textContent?.trim();
           if (skillName?.includes("CN:")) {
             skillName = skillName.substring(0, skillName.indexOf("CN:"));
           }
-          const skillDesc = skillElement.children[3].textContent?.trim();
+          const skillDesc = skillElement.lastElementChild?.textContent?.trim();
 
           if (skillDesc && skillType && skillName) {
             skills.push({
@@ -605,10 +605,10 @@ export class Parser {
     }
 
     if (retrofit && key !== "base") title = `${title} Retrofit`;
-    const selector = doc.querySelectorAll('.tabbertab');
+    const selector = doc.querySelectorAll(".tabbertab");
     let el = undefined;
-    for(let i = 0; i < selector.length; i++) {
-      if(selector[i].getAttribute('title')?.trim() === title) {
+    for (let i = 0; i < selector.length; i++) {
+      if (selector[i].getAttribute("title")?.trim() === title) {
         el = selector[i];
         break;
       }
@@ -914,11 +914,11 @@ export class Parser {
       if (!images.chibis) images.chibis = [];
       const skinImage = {
         name,
-        url: skinUrl || '',
+        url: skinUrl || "",
       };
       const skinChibiImage = {
         name,
-        url: chibiUrl || '',
+        url: chibiUrl || "",
       };
       images.skins.push(skinImage);
       if (!images.chibis.find((c) => c.name === name) && chibiUrl) {
