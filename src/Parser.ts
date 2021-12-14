@@ -73,7 +73,7 @@ export class Parser {
     const unreleasedShips: UnreleasedShip[] = [];
     const total = shipWrappers.length;
     let failed = 0;
-
+    
     for (const shipWrapper of shipWrappers) {
       try {
         const shipParseStart = Date.now();
@@ -482,7 +482,8 @@ export class Parser {
       base: this.getShipStats(doc, "base", name),
     };
     const images = await this.getShipImages(doc, name);
-    const misc = this.getMisc(doc, name);
+    // disabled misc because wiki doesn't have dedicated misc table anymore
+    // const misc = this.getMisc(doc, name);
     const construction = this.getConstruction(doc, name);
     let retrofit;
     if (shipWrapper.retrofit) retrofit = this.getRetrofit(doc, name);
@@ -522,7 +523,7 @@ export class Parser {
       rarity,
       id,
       name,
-      misc,
+      misc: [],
       construction,
       retrofit,
       type,
@@ -750,7 +751,7 @@ export class Parser {
       );
 
     const drops: boolean[][] = [];
-    for (let i = 0; i < 13; i++) drops[i] = [];
+    for (let i = 0; i < 14; i++) drops[i] = [];
     const types: boolean[] = [];
 
     const tbody = el.firstElementChild?.firstElementChild;
@@ -781,7 +782,7 @@ export class Parser {
     if (!info) info = undefined;
 
     // 0th child has headers ignore that
-    for (let i = 1; i < tbody.children.length; i++) {
+    for (let i = 1; i < 5; i++) {
       const child = tbody.children.item(i);
       if (!child) continue;
       let index = 0;

@@ -1,7 +1,7 @@
 import Cluster from "./structures/Cluster";
 import { createConnection } from "mongoose";
 import config from "../config.json";
-import { CronJob } from "cron";
+// import { CronJob } from "cron";
 import { readFile } from "fs-extra";
 import { Ship, ParseData, UnreleasedShip, Equipment } from "./types/ParseData";
 import { Parser } from "./Parser";
@@ -91,7 +91,9 @@ async function start() {
   await client.notificationHandler.init();
   await client.login(client.config.token);
 
-  const cronJob = new CronJob(
+  // There is a memory leak with parser not sure if it's about the library or not.
+  // I've disabled auto parser for this reason.
+/*   const cronJob = new CronJob(
     "0 3 * * *",
     async () => {
       parseData(client);
@@ -100,7 +102,7 @@ async function start() {
     true,
     "Europe/Istanbul"
   );
-  cronJob.start();
+  cronJob.start(); */
 }
 
 async function loadOrParseData() {
@@ -153,10 +155,10 @@ async function parseData(client?: Cluster) {
     client.unreleasedShips = unreleasedShips;
     client.equipments = equipments;
   }
-  await copy(
+  copy(
     `${config.dataFileName}.json`,
     `/data-backup/${config.dataFileName}-${new Date().toLocaleDateString()}`
-  );
+  ).catch(() => logger.error(`Error while backing up data json`));
   await writeFile(`${config.dataFileName}.json`, JSON.stringify(obj));
   return {
     date,
