@@ -1,1 +1,3 @@
 # Prinz Eugen
+
+This is an old discord bot project for Azur Lane that I used to privately host. I'm making the repository public in case people would like to see its code. It had a lot of problems especially regarding the parser so I decided to stop supporting it and started working on a new project. It probably still works but without the data coming from parser there is no use to it really. I will not give detailed instructions on how to run it but other than creating a mongodb collection and filling the data in config file, there isn't really much to it so it should be fairly simple. For the general structure of the bot I took inspiration from another bot (I sadly don't remember its name).
